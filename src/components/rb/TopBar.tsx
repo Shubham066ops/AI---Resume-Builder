@@ -10,12 +10,12 @@ const TopBar = ({ currentStep }: TopBarProps) => {
   const unlocked = getHighestUnlockedStep();
 
   return (
-    <div className="flex items-center justify-between px-6 py-3 bg-topbar text-topbar-foreground border-b border-border">
+    <div className="flex items-center justify-between px-6 py-4 bg-topbar text-topbar-foreground border-b border-border">
       <div className="flex items-center gap-2">
-        <div className="h-7 w-7 rounded-md bg-primary flex items-center justify-center">
-          <span className="text-primary-foreground text-xs font-bold">RB</span>
+        <div className="h-8 w-8 rounded-md border border-topbar-foreground/20 flex items-center justify-center">
+          <span className="text-xs font-bold font-[var(--font-heading)]">RB</span>
         </div>
-        <span className="font-semibold text-sm tracking-tight">AI Resume Builder</span>
+        <span className="font-medium text-sm tracking-wide">AI Resume Builder</span>
       </div>
 
       <div className="hidden md:flex items-center gap-1">
@@ -29,12 +29,12 @@ const TopBar = ({ currentStep }: TopBarProps) => {
               key={step.id}
               className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors ${
                 active
-                  ? "bg-primary/15 text-primary"
+                  ? "text-primary"
                   : complete
                   ? "text-step-complete"
                   : locked
                   ? "text-step-locked"
-                  : "text-muted-foreground"
+                  : "text-topbar-foreground/50"
               }`}
             >
               {complete ? (
@@ -50,8 +50,8 @@ const TopBar = ({ currentStep }: TopBarProps) => {
         })}
       </div>
 
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-muted-foreground">
+      <div className="flex items-center gap-3">
+        <span className="text-xs text-topbar-foreground/60">
           Project 3 — Step {currentStep} of 8
         </span>
         <StatusBadge currentStep={currentStep} />
@@ -67,7 +67,7 @@ const StatusBadge = ({ currentStep }: { currentStep: number }) => {
 
   if (allDone) {
     return (
-      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-badge-success/15 text-badge-success">
+      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-badge-success/15 text-badge-success">
         COMPLETE
       </span>
     );
@@ -75,14 +75,14 @@ const StatusBadge = ({ currentStep }: { currentStep: number }) => {
 
   if (isStepComplete(currentStep)) {
     return (
-      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-badge-info/15 text-badge-info">
+      <span className="px-2 py-0.5 rounded text-[10px] font-semibold text-primary bg-primary/10">
         DONE
       </span>
     );
   }
 
   return (
-    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-badge-warning/15 text-badge-warning">
+    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-badge-warning/15 text-badge-warning">
       IN PROGRESS
     </span>
   );
