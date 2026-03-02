@@ -47,6 +47,29 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        surface: {
+          DEFAULT: "hsl(var(--surface))",
+          foreground: "hsl(var(--surface-foreground))",
+        },
+        topbar: {
+          DEFAULT: "hsl(var(--topbar))",
+          foreground: "hsl(var(--topbar-foreground))",
+        },
+        panel: {
+          DEFAULT: "hsl(var(--panel))",
+          border: "hsl(var(--panel-border))",
+        },
+        step: {
+          active: "hsl(var(--step-active))",
+          locked: "hsl(var(--step-locked))",
+          complete: "hsl(var(--step-complete))",
+        },
+        badge: {
+          warning: "hsl(var(--badge-warning))",
+          success: "hsl(var(--badge-success))",
+          error: "hsl(var(--badge-error))",
+          info: "hsl(var(--badge-info))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
