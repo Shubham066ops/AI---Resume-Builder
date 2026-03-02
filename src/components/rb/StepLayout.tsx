@@ -29,22 +29,22 @@ const StepLayout = ({ children }: StepLayoutProps) => {
       <ContextHeader step={currentStep} />
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Main workspace */}
+        {/* Main workspace — 70% */}
         <div className="flex-[7] flex flex-col overflow-auto">
-          <div className="flex-1 p-6">{children}</div>
+          <div className="flex-1 p-10">{children}</div>
 
           {/* Navigation footer */}
-          <div className="flex items-center justify-between px-6 py-3 border-t border-border bg-surface">
+          <div className="flex items-center justify-between px-6 py-4 border-t border-border bg-surface">
             <button
               onClick={() => prevStep && navigate(`/rb/${prevStep.slug}`)}
               disabled={!prevStep}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               Previous
             </button>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               {STEPS.map((s) => (
                 <button
                   key={s.id}
@@ -54,7 +54,7 @@ const StepLayout = ({ children }: StepLayoutProps) => {
                     s.id === currentStep.id
                       ? "bg-primary"
                       : isStepComplete(s.id)
-                      ? "bg-step-complete/50"
+                      ? "bg-primary/40"
                       : s.id <= unlocked
                       ? "bg-muted-foreground/30"
                       : "bg-step-locked/30"
@@ -67,7 +67,7 @@ const StepLayout = ({ children }: StepLayoutProps) => {
               <button
                 onClick={() => navigate("/rb/proof")}
                 disabled={!isStepComplete(currentStep.id)}
-                className="flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-2 px-6 py-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
               >
                 View Proof
               </button>
@@ -75,7 +75,7 @@ const StepLayout = ({ children }: StepLayoutProps) => {
               <button
                 onClick={() => canGoNext && navigate(`/rb/${nextStep.slug}`)}
                 disabled={!canGoNext}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 {!isStepComplete(currentStep.id) && <Lock className="w-3 h-3" />}
                 Next
@@ -85,7 +85,7 @@ const StepLayout = ({ children }: StepLayoutProps) => {
           </div>
         </div>
 
-        {/* Build panel - 30% */}
+        {/* Build panel — 30% */}
         <div className="flex-[3] hidden md:flex flex-col">
           <BuildPanel step={currentStep} />
         </div>

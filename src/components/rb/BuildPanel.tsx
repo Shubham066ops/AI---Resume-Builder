@@ -36,10 +36,10 @@ const BuildPanel = ({ step }: BuildPanelProps) => {
   };
 
   return (
-    <div className="flex flex-col h-full border-l border-panel-border bg-panel">
-      <div className="px-4 py-3 border-b border-panel-border">
+    <div className="flex flex-col h-full border-l border-border bg-panel">
+      <div className="px-4 py-4 border-b border-border">
         <h2 className="text-sm font-semibold text-foreground">Build Panel</h2>
-        <p className="text-[11px] text-muted-foreground mt-0.5">
+        <p className="text-[11px] text-muted-foreground mt-1">
           Copy the prompt below and paste it into Lovable
         </p>
       </div>
@@ -47,22 +47,20 @@ const BuildPanel = ({ step }: BuildPanelProps) => {
       <div className="flex-1 overflow-auto p-4 space-y-4">
         {/* Prompt textarea */}
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+          <label className="text-xs font-medium text-muted-foreground mb-2 block">
             Copy This Into Lovable
           </label>
-          <div className="relative">
-            <textarea
-              readOnly
-              value={prompt}
-              className="w-full h-36 p-3 text-xs bg-surface border border-border rounded-lg resize-none text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-            />
-          </div>
+          <textarea
+            readOnly
+            value={prompt}
+            className="w-full h-36 p-4 text-xs bg-surface border border-border rounded-md resize-none text-foreground focus:outline-none focus:ring-1 focus:ring-ring leading-relaxed"
+          />
         </div>
 
         {/* Copy button */}
         <button
           onClick={handleCopy}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-secondary text-secondary-foreground text-sm font-medium hover:bg-secondary/80 transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-md border border-border bg-card text-foreground text-sm font-medium hover:bg-secondary transition-colors"
         >
           <Copy className="w-4 h-4" />
           Copy Prompt
@@ -73,7 +71,7 @@ const BuildPanel = ({ step }: BuildPanelProps) => {
           href="https://lovable.dev"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
         >
           <ExternalLink className="w-4 h-4" />
           Build in Lovable
@@ -86,10 +84,10 @@ const BuildPanel = ({ step }: BuildPanelProps) => {
             <button
               onClick={handleWorked}
               disabled={complete}
-              className={`flex flex-col items-center gap-1 p-2.5 rounded-lg text-[11px] font-medium transition-colors border ${
+              className={`flex flex-col items-center gap-1 p-3 rounded-md text-[11px] font-medium transition-colors border ${
                 status === "worked" || complete
-                  ? "border-badge-success/30 bg-badge-success/10 text-badge-success"
-                  : "border-border bg-surface text-muted-foreground hover:text-foreground hover:border-badge-success/50"
+                  ? "border-primary/30 bg-primary/5 text-primary"
+                  : "border-border bg-card text-muted-foreground hover:text-foreground hover:border-primary/30"
               }`}
             >
               <CheckCircle2 className="w-4 h-4" />
@@ -97,17 +95,17 @@ const BuildPanel = ({ step }: BuildPanelProps) => {
             </button>
             <button
               onClick={() => setStatus("error")}
-              className={`flex flex-col items-center gap-1 p-2.5 rounded-lg text-[11px] font-medium transition-colors border ${
+              className={`flex flex-col items-center gap-1 p-3 rounded-md text-[11px] font-medium transition-colors border ${
                 status === "error"
-                  ? "border-badge-error/30 bg-badge-error/10 text-badge-error"
-                  : "border-border bg-surface text-muted-foreground hover:text-foreground hover:border-badge-error/50"
+                  ? "border-destructive/30 bg-destructive/5 text-destructive"
+                  : "border-border bg-card text-muted-foreground hover:text-foreground hover:border-destructive/30"
               }`}
             >
               <XCircle className="w-4 h-4" />
               Error
             </button>
             <button
-              className="flex flex-col items-center gap-1 p-2.5 rounded-lg text-[11px] font-medium transition-colors border border-border bg-surface text-muted-foreground hover:text-foreground hover:border-badge-info/50"
+              className="flex flex-col items-center gap-1 p-3 rounded-md text-[11px] font-medium transition-colors border border-border bg-card text-muted-foreground hover:text-foreground"
             >
               <ImagePlus className="w-4 h-4" />
               Screenshot

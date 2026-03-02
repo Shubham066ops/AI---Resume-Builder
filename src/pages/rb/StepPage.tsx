@@ -51,31 +51,31 @@ const StepPage = () => {
 
   return (
     <StepLayout>
-      <div className="max-w-2xl mx-auto">
-        <div className="flex flex-col items-center text-center mb-8">
-          <div className={`mb-4 ${complete ? "text-step-complete" : "text-muted-foreground"}`}>
+      <div className="max-w-xl mx-auto">
+        <div className="flex flex-col items-center text-center mb-10">
+          <div className={`mb-6 ${complete ? "text-primary" : "text-muted-foreground"}`}>
             {STEP_ICONS[currentStep.id]}
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">
+          <h2 className="text-2xl font-semibold text-foreground mb-3">
             Step {currentStep.id}: {currentStep.title}
           </h2>
-          <p className="text-sm text-muted-foreground max-w-md">
+          <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
             {STEP_DESCRIPTIONS[currentStep.id]}
           </p>
         </div>
 
         {complete ? (
-          <div className="rounded-xl border border-step-complete/20 bg-step-complete/5 p-6 text-center">
-            <p className="text-sm font-medium text-step-complete">
+          <div className="rounded-md border border-primary/20 bg-primary/5 p-6 text-center">
+            <p className="text-sm font-medium text-primary">
               ✓ Artifact uploaded — Step complete
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-2">
               You can proceed to the next step or revisit this one.
             </p>
           </div>
         ) : (
-          <div className="rounded-xl border border-border bg-surface p-6 text-center">
-            <p className="text-sm text-muted-foreground">
+          <div className="rounded-md border border-border bg-surface p-6 text-center">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               Use the Build Panel on the right to copy the prompt, build in Lovable, and mark this step complete.
             </p>
           </div>

@@ -1,114 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 220 20% 97%;
-    --foreground: 220 25% 10%;
+    /* 4-color palette: off-white, near-black, deep red, muted gray */
+    --background: 40 23% 96%; /* #F7F6F3 */
+    --foreground: 0 0% 10%; /* #1A1A1A */
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 25% 10%;
+    --card: 40 20% 98%;
+    --card-foreground: 0 0% 10%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 10%;
+    --popover: 40 20% 98%;
+    --popover-foreground: 0 0% 10%;
 
-    --primary: 145 65% 42%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 100% 27%; /* #8B0000 deep red */
+    --primary-foreground: 40 23% 96%;
 
-    --secondary: 220 14% 90%;
-    --secondary-foreground: 220 25% 10%;
+    --secondary: 40 12% 92%;
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 220 14% 94%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 40 10% 92%;
+    --muted-foreground: 0 0% 42%; /* #6B6B6B */
 
-    --accent: 200 80% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 0 100% 27%; /* same deep red, used sparingly */
+    --accent-foreground: 40 23% 96%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 87%;
-    --input: 220 13% 87%;
-    --ring: 145 65% 42%;
+    --border: 40 10% 88%;
+    --input: 40 10% 88%;
+    --ring: 0 100% 27%;
 
-    --radius: 0.5rem;
+    --radius: 0.375rem;
 
-    --surface: 220 16% 96%;
-    --surface-foreground: 220 25% 10%;
-    --step-active: 145 65% 42%;
-    --step-locked: 220 10% 70%;
-    --step-complete: 145 65% 42%;
-    --panel: 220 20% 98%;
-    --panel-border: 220 13% 90%;
-    --topbar: 220 25% 12%;
-    --topbar-foreground: 220 14% 90%;
+    --surface: 40 18% 94%;
+    --surface-foreground: 0 0% 10%;
+    --step-active: 0 100% 27%;
+    --step-locked: 0 0% 72%;
+    --step-complete: 0 100% 27%;
+    --panel: 40 20% 97%;
+    --panel-border: 40 10% 88%;
+    --topbar: 0 0% 8%;
+    --topbar-foreground: 40 15% 85%;
     --badge-warning: 38 92% 50%;
-    --badge-success: 145 65% 42%;
+    --badge-success: 145 55% 38%;
     --badge-error: 0 72% 51%;
-    --badge-info: 200 80% 50%;
+    --badge-info: 0 100% 27%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 40 23% 96%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 0 100% 27%;
+    --sidebar-primary-foreground: 40 23% 96%;
+    --sidebar-accent: 40 12% 92%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 40 10% 88%;
+    --sidebar-ring: 0 100% 27%;
+
+    --font-heading: 'Playfair Display', Georgia, serif;
+    --font-body: 'Inter', system-ui, sans-serif;
   }
 
   .dark {
-    --background: 222 25% 8%;
-    --foreground: 210 20% 92%;
+    --background: 0 0% 7%;
+    --foreground: 40 15% 88%;
 
-    --card: 222 22% 11%;
-    --card-foreground: 210 20% 92%;
+    --card: 0 0% 10%;
+    --card-foreground: 40 15% 88%;
 
-    --popover: 222 22% 11%;
-    --popover-foreground: 210 20% 92%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 40 15% 88%;
 
-    --primary: 145 65% 42%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 80% 40%;
+    --primary-foreground: 40 15% 95%;
 
-    --secondary: 220 16% 18%;
-    --secondary-foreground: 210 20% 92%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 40 15% 88%;
 
-    --muted: 220 16% 16%;
-    --muted-foreground: 215 15% 55%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 55%;
 
-    --accent: 200 80% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 0 80% 40%;
+    --accent-foreground: 40 15% 95%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 16% 18%;
-    --input: 220 16% 18%;
-    --ring: 145 65% 42%;
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
+    --ring: 0 80% 40%;
 
-    --surface: 222 22% 13%;
-    --surface-foreground: 210 20% 92%;
-    --step-active: 145 65% 42%;
-    --step-locked: 220 10% 40%;
-    --step-complete: 145 65% 42%;
-    --panel: 222 22% 10%;
-    --panel-border: 220 16% 18%;
-    --topbar: 222 30% 6%;
-    --topbar-foreground: 210 20% 85%;
+    --surface: 0 0% 11%;
+    --surface-foreground: 40 15% 88%;
+    --step-active: 0 80% 40%;
+    --step-locked: 0 0% 40%;
+    --step-complete: 0 80% 40%;
+    --panel: 0 0% 9%;
+    --panel-border: 0 0% 16%;
+    --topbar: 0 0% 5%;
+    --topbar-foreground: 40 15% 78%;
     --badge-warning: 38 92% 50%;
-    --badge-success: 145 65% 42%;
+    --badge-success: 145 55% 38%;
     --badge-error: 0 72% 51%;
-    --badge-info: 200 80% 50%;
+    --badge-info: 0 80% 40%;
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 7%;
+    --sidebar-foreground: 40 15% 88%;
+    --sidebar-primary: 0 80% 40%;
+    --sidebar-primary-foreground: 40 15% 95%;
+    --sidebar-accent: 0 0% 14%;
+    --sidebar-accent-foreground: 40 15% 88%;
+    --sidebar-border: 0 0% 16%;
+    --sidebar-ring: 0 80% 40%;
   }
 }
 
@@ -119,5 +125,11 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    letter-spacing: 0.01em;
   }
 }
