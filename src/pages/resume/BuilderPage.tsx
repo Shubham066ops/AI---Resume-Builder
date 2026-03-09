@@ -1,6 +1,7 @@
 import ResumeNav from "@/components/resume/ResumeNav";
 import BuilderForm from "@/components/resume/BuilderForm";
 import ResumePreviewPanel from "@/components/resume/ResumePreviewPanel";
+import ATSScorePanel from "@/components/resume/ATSScorePanel";
 
 const BuilderPage = () => (
   <div className="min-h-screen bg-background">
@@ -14,10 +15,15 @@ const BuilderPage = () => (
           <BuilderForm />
         </div>
 
-        {/* Right: Live Preview */}
-        <div className="lg:sticky lg:top-20 lg:self-start">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Live Preview</p>
-          <ResumePreviewPanel />
+        {/* Right: Live Preview + ATS */}
+        <div className="lg:sticky lg:top-20 lg:self-start space-y-8">
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Live Preview</p>
+            <ResumePreviewPanel />
+          </div>
+          <div className="border border-border rounded-md p-6 bg-background">
+            <ATSScorePanel />
+          </div>
         </div>
       </div>
     </div>

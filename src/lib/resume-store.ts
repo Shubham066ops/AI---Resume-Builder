@@ -44,6 +44,8 @@ export interface ResumeData {
   };
 }
 
+const STORAGE_KEY = "resumeBuilderData";
+
 const emptyResume: ResumeData = {
   personalInfo: { name: "", email: "", phone: "", location: "" },
   summary: "",
@@ -110,6 +112,27 @@ const sampleResume: ResumeData = {
   },
 };
 
+function loadFromStorage(): ResumeData {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { ...emptyResume, ...parsed };
+    }
+  } catch {
+    // ignore
+  }
+  return { ...emptyResume };
+}
+
+function saveToStorage(data: ResumeData) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    // ignore
+  }
+}
+
 interface ResumeStore {
   data: ResumeData;
   setField: <K extends keyof ResumeData>(key: K, value: ResumeData[K]) => void;
@@ -118,9 +141,92 @@ interface ResumeStore {
 }
 
 export const useResumeStore = create<ResumeStore>((set) => ({
-  data: { ...emptyResume },
+  data: loadFromStorage(),
   setField: (key, value) =>
-    set((state) => ({ data: { ...state.data, [key]: value } })),
-  loadSample: () => set({ data: { ...sampleResume } }),
-  reset: () => set({ data: { ...emptyResume } }),
+    set((state) => {
+      const next = { ...state.data, [key]: value };
+      saveToStorage(next);
+      return { data: next };
+    }),
+  loadSample: () => {
+    saveToStorage({ ...sampleResume });
+    return set({ data: { ...sampleResume } });
+  },
+  reset: () => {
+    saveToStorage({ ...emptyResume });
+    return set({ data: { ...emptyResume } });
+  },
 }));
+
+/* ── ATS Score v1 (deterministic) ── */
+
+export interface ATSResult {
+  score: number;
+  suggestions: string[];
+}
+
+export function computeATSScore(data: ResumeData): ATSResult {
+  let score = 0;
+  const suggestions: string[] = [];
+
+  // +15 summary 40-120 words
+  const wordCount = data.summary.trim().split(/\s+/).filter(Boolean).length;
+  if (wordCount >= 40 && wordCount <= 120) {
+    score += 15;
+  } else if (suggestions.length < 3) {
+    suggestions.push("Write a stronger summary (target 40–120 words).");
+  }
+
+  // +10 at least 2 projects
+  if (data.projects.length >= 2) {
+    score += 10;
+  } else if (suggestions.length < 3) {
+    suggestions.push("Add at least 2 projects.");
+  }
+
+  // +10 at least 1 experience
+  if (data.experience.length >= 1) {
+    score += 10;
+  } else if (suggestions.length < 3) {
+    suggestions.push("Add at least 1 work experience entry.");
+  }
+
+  // +10 skills >= 8
+  const skillCount = data.skills.split(",").map((s) => s.trim()).filter(Boolean).length;
+  if (skillCount >= 8) {
+    score += 10;
+  } else if (suggestions.length < 3) {
+    suggestions.push("Add more skills (target 8+).");
+  }
+
+  // +10 github or linkedin
+  if (data.links.github || data.links.linkedin) {
+    score += 10;
+  } else if (suggestions.length < 3) {
+    suggestions.push("Add a GitHub or LinkedIn link.");
+  }
+
+  // +15 measurable impact (numbers in experience/project descriptions)
+  const hasNumbers = /\d+%|\d+x|\d+k|\d+\+|\d+M/i;
+  const allBullets = [
+    ...data.experience.map((e) => e.description),
+    ...data.projects.map((p) => p.description),
+  ];
+  if (allBullets.some((b) => hasNumbers.test(b))) {
+    score += 15;
+  } else if (suggestions.length < 3) {
+    suggestions.push("Add measurable impact (numbers) in bullets.");
+  }
+
+  // +10 education complete
+  const eduComplete = data.education.length > 0 && data.education.every(
+    (e) => e.institution && e.degree && e.field && e.startDate && e.endDate
+  );
+  if (eduComplete) {
+    score += 10;
+  } else if (suggestions.length < 3) {
+    suggestions.push("Complete all education fields.");
+  }
+
+  return { score: Math.min(score, 100), suggestions: suggestions.slice(0, 3) };
+}
