@@ -75,7 +75,7 @@ const ATSScorePanel = () => {
   );
 };
 
-function getImprovements(data: ReturnType<typeof useResumeStore>["data"]): string[] {
+function getImprovements(data: import("@/lib/resume-store").ResumeData): string[] {
   const items: string[] = [];
   const wordCount = data.summary.trim().split(/\s+/).filter(Boolean).length;
   const skillCount = data.skills.split(",").map((s) => s.trim()).filter(Boolean).length;
