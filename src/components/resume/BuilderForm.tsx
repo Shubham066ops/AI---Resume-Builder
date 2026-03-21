@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Sparkles } from "lucide-react";
+import BulletGuidance from "./BulletGuidance";
 
 const uid = () => crypto.randomUUID();
 
@@ -115,6 +116,7 @@ const BuilderForm = () => {
               <Input placeholder="End Date" value={exp.endDate} onChange={(e) => updateExperience(exp.id, "endDate", e.target.value)} />
             </div>
             <Textarea placeholder="Description" value={exp.description} onChange={(e) => updateExperience(exp.id, "description", e.target.value)} rows={3} />
+            <BulletGuidance text={exp.description} />
           </div>
         ))}
       </Section>
@@ -130,6 +132,7 @@ const BuilderForm = () => {
             <Input placeholder="Tech Stack" value={proj.techStack} onChange={(e) => updateProject(proj.id, "techStack", e.target.value)} />
             <Input placeholder="Link" value={proj.link} onChange={(e) => updateProject(proj.id, "link", e.target.value)} />
             <Textarea placeholder="Description" value={proj.description} onChange={(e) => updateProject(proj.id, "description", e.target.value)} rows={2} />
+            <BulletGuidance text={proj.description} />
           </div>
         ))}
       </Section>
