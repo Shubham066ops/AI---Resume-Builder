@@ -1,7 +1,10 @@
 import { useResumeStore } from "@/lib/resume-store";
+import { useTemplateStore, templateStyles } from "@/lib/template-store";
 
 const ResumePreviewPanel = () => {
   const { data } = useResumeStore();
+  const { template } = useTemplateStore();
+  const s = templateStyles[template];
   const hasContent = data.personalInfo.name || data.summary || data.experience.length > 0;
 
   return (
@@ -11,10 +14,10 @@ const ResumePreviewPanel = () => {
           Fill in the form or load sample data to see your resume here.
         </div>
       ) : (
-        <div className="space-y-6 text-foreground">
+        <div className={`${s.spacing} text-foreground`}>
           {/* Header */}
-          <div className="text-center space-y-1 pb-4 border-b border-border">
-            <h2 className="font-[var(--font-heading)] text-2xl font-bold tracking-tight">
+          <div className={`${s.headerAlign} space-y-1 pb-4 border-b border-border`}>
+            <h2 className={`font-[var(--font-heading)] ${s.nameSize} font-bold tracking-tight`}>
               {data.personalInfo.name || "Your Name"}
             </h2>
             <p className="text-sm text-muted-foreground">
@@ -29,22 +32,16 @@ const ResumePreviewPanel = () => {
             )}
           </div>
 
-          {/* Summary */}
           {data.summary && (
             <div>
-              <h3 className="font-[var(--font-heading)] text-sm font-semibold uppercase tracking-widest text-foreground mb-2">
-                Summary
-              </h3>
+              <h3 className={s.sectionTitle}>Summary</h3>
               <p className="text-sm leading-relaxed text-muted-foreground">{data.summary}</p>
             </div>
           )}
 
-          {/* Experience */}
           {data.experience.length > 0 && (
             <div>
-              <h3 className="font-[var(--font-heading)] text-sm font-semibold uppercase tracking-widest text-foreground mb-2">
-                Experience
-              </h3>
+              <h3 className={s.sectionTitle}>Experience</h3>
               <div className="space-y-3">
                 {data.experience.map((exp) => (
                   <div key={exp.id}>
@@ -60,12 +57,9 @@ const ResumePreviewPanel = () => {
             </div>
           )}
 
-          {/* Education */}
           {data.education.length > 0 && (
             <div>
-              <h3 className="font-[var(--font-heading)] text-sm font-semibold uppercase tracking-widest text-foreground mb-2">
-                Education
-              </h3>
+              <h3 className={s.sectionTitle}>Education</h3>
               <div className="space-y-2">
                 {data.education.map((edu) => (
                   <div key={edu.id} className="flex justify-between items-baseline">
@@ -80,12 +74,9 @@ const ResumePreviewPanel = () => {
             </div>
           )}
 
-          {/* Projects */}
           {data.projects.length > 0 && (
             <div>
-              <h3 className="font-[var(--font-heading)] text-sm font-semibold uppercase tracking-widest text-foreground mb-2">
-                Projects
-              </h3>
+              <h3 className={s.sectionTitle}>Projects</h3>
               <div className="space-y-2">
                 {data.projects.map((proj) => (
                   <div key={proj.id}>
@@ -98,12 +89,9 @@ const ResumePreviewPanel = () => {
             </div>
           )}
 
-          {/* Skills */}
           {data.skills && (
             <div>
-              <h3 className="font-[var(--font-heading)] text-sm font-semibold uppercase tracking-widest text-foreground mb-2">
-                Skills
-              </h3>
+              <h3 className={s.sectionTitle}>Skills</h3>
               <p className="text-sm text-muted-foreground">{data.skills}</p>
             </div>
           )}
