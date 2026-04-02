@@ -22,8 +22,15 @@ export interface Project {
   id: string;
   name: string;
   description: string;
-  techStack: string;
+  techStack: string[];
   link: string;
+  githubUrl: string;
+}
+
+export interface SkillCategories {
+  technical: string[];
+  soft: string[];
+  tools: string[];
 }
 
 export interface ResumeData {
@@ -37,7 +44,7 @@ export interface ResumeData {
   education: Education[];
   experience: Experience[];
   projects: Project[];
-  skills: string;
+  skills: SkillCategories;
   links: {
     github: string;
     linkedin: string;
@@ -52,7 +59,7 @@ const emptyResume: ResumeData = {
   education: [],
   experience: [],
   projects: [],
-  skills: "",
+  skills: { technical: [], soft: [], tools: [] },
   links: { github: "", linkedin: "" },
 };
 
@@ -101,24 +108,50 @@ const sampleResume: ResumeData = {
       name: "DevConnect",
       description:
         "A developer networking platform with real-time chat, project showcasing, and job matching.",
-      techStack: "React, Node.js, Socket.io, PostgreSQL",
-      link: "https://github.com/arjun/devconnect",
+      techStack: ["React", "Node.js", "Socket.io", "PostgreSQL"],
+      link: "https://devconnect.app",
+      githubUrl: "https://github.com/arjun/devconnect",
     },
   ],
-  skills: "React, TypeScript, Node.js, PostgreSQL, AWS, Docker, Git, Tailwind CSS, GraphQL",
+  skills: {
+    technical: ["React", "TypeScript", "Node.js", "PostgreSQL", "GraphQL"],
+    soft: ["Team Leadership", "Problem Solving"],
+    tools: ["Git", "Docker", "AWS", "Tailwind CSS"],
+  },
   links: {
     github: "https://github.com/arjunmehta",
     linkedin: "https://linkedin.com/in/arjunmehta",
   },
 };
 
+/** Migrate old string-based skills/projects to new format */
+function migrateData(parsed: any): ResumeData {
+  // Migrate skills from string to categories
+  if (typeof parsed.skills === "string") {
+    const arr = parsed.skills.split(",").map((s: string) => s.trim()).filter(Boolean);
+    parsed.skills = { technical: arr, soft: [], tools: [] };
+  } else if (!parsed.skills || typeof parsed.skills !== "object") {
+    parsed.skills = { technical: [], soft: [], tools: [] };
+  }
+
+  // Migrate projects techStack from string to array, add githubUrl
+  if (Array.isArray(parsed.projects)) {
+    parsed.projects = parsed.projects.map((p: any) => ({
+      ...p,
+      techStack: typeof p.techStack === "string"
+        ? p.techStack.split(",").map((s: string) => s.trim()).filter(Boolean)
+        : (p.techStack || []),
+      githubUrl: p.githubUrl || "",
+    }));
+  }
+
+  return { ...emptyResume, ...parsed };
+}
+
 function loadFromStorage(): ResumeData {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      return { ...emptyResume, ...parsed };
-    }
+    if (raw) return migrateData(JSON.parse(raw));
   } catch {
     // ignore
   }
@@ -158,6 +191,13 @@ export const useResumeStore = create<ResumeStore>((set) => ({
   },
 }));
 
+/* ── Helpers ── */
+
+/** Flatten all skills into a single array */
+export function allSkills(skills: SkillCategories): string[] {
+  return [...skills.technical, ...skills.soft, ...skills.tools];
+}
+
 /* ── ATS Score v1 (deterministic) ── */
 
 export interface ATSResult {
@@ -169,7 +209,6 @@ export function computeATSScore(data: ResumeData): ATSResult {
   let score = 0;
   const suggestions: string[] = [];
 
-  // +15 summary 40-120 words
   const wordCount = data.summary.trim().split(/\s+/).filter(Boolean).length;
   if (wordCount >= 40 && wordCount <= 120) {
     score += 15;
@@ -177,36 +216,31 @@ export function computeATSScore(data: ResumeData): ATSResult {
     suggestions.push("Write a stronger summary (target 40–120 words).");
   }
 
-  // +10 at least 2 projects
   if (data.projects.length >= 2) {
     score += 10;
   } else if (suggestions.length < 3) {
     suggestions.push("Add at least 2 projects.");
   }
 
-  // +10 at least 1 experience
   if (data.experience.length >= 1) {
     score += 10;
   } else if (suggestions.length < 3) {
     suggestions.push("Add at least 1 work experience entry.");
   }
 
-  // +10 skills >= 8
-  const skillCount = data.skills.split(",").map((s) => s.trim()).filter(Boolean).length;
+  const skillCount = allSkills(data.skills).length;
   if (skillCount >= 8) {
     score += 10;
   } else if (suggestions.length < 3) {
     suggestions.push("Add more skills (target 8+).");
   }
 
-  // +10 github or linkedin
   if (data.links.github || data.links.linkedin) {
     score += 10;
   } else if (suggestions.length < 3) {
     suggestions.push("Add a GitHub or LinkedIn link.");
   }
 
-  // +15 measurable impact (numbers in experience/project descriptions)
   const hasNumbers = /\d+%|\d+x|\d+k|\d+\+|\d+M/i;
   const allBullets = [
     ...data.experience.map((e) => e.description),
@@ -218,7 +252,6 @@ export function computeATSScore(data: ResumeData): ATSResult {
     suggestions.push("Add measurable impact (numbers) in bullets.");
   }
 
-  // +10 education complete
   const eduComplete = data.education.length > 0 && data.education.every(
     (e) => e.institution && e.degree && e.field && e.startDate && e.endDate
   );
