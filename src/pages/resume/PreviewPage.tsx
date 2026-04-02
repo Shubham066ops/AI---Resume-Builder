@@ -117,21 +117,56 @@ const PreviewPage = () => {
 
               {data.projects.length > 0 && (
                 <ResumeSection title="Projects" sectionClass={s.sectionTitle}>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {data.projects.map((proj) => (
-                      <div key={proj.id} className="break-inside-avoid">
-                        <p className="font-medium text-sm">{proj.name}</p>
-                        <p className="text-xs text-muted-foreground print:text-neutral-600">{proj.techStack}</p>
-                        <p className="text-sm mt-1 leading-relaxed text-muted-foreground print:text-neutral-700">{proj.description}</p>
+                      <div key={proj.id} className="break-inside-avoid border border-border print:border-neutral-200 rounded-md p-3">
+                        <div className="flex items-center justify-between">
+                          <p className="font-medium text-sm">{proj.name}</p>
+                          <div className="flex items-center gap-2">
+                            {proj.link && (
+                              <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground print:text-neutral-600">
+                                <ExternalLink className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                            {proj.githubUrl && (
+                              <a href={proj.githubUrl} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground print:text-neutral-600">
+                                <Github className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                        {proj.techStack.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1.5">
+                            {proj.techStack.map((t) => (
+                              <span key={t} className="px-1.5 py-0.5 text-[10px] rounded bg-muted text-muted-foreground print:bg-neutral-100 print:text-neutral-700">{t}</span>
+                            ))}
+                          </div>
+                        )}
+                        <p className="text-sm mt-1.5 leading-relaxed text-muted-foreground print:text-neutral-700">{proj.description}</p>
                       </div>
                     ))}
                   </div>
                 </ResumeSection>
               )}
 
-              {data.skills && (
+              {(data.skills.technical.length > 0 || data.skills.soft.length > 0 || data.skills.tools.length > 0) && (
                 <ResumeSection title="Skills" sectionClass={s.sectionTitle}>
-                  <p className="text-sm text-muted-foreground print:text-neutral-700">{data.skills}</p>
+                  <div className="space-y-2">
+                    {(["technical", "soft", "tools"] as const).map((cat) => {
+                      if (data.skills[cat].length === 0) return null;
+                      const label = cat === "technical" ? "Technical" : cat === "soft" ? "Soft Skills" : "Tools";
+                      return (
+                        <div key={cat}>
+                          <p className="text-xs font-medium text-foreground mb-1 print:text-black">{label}</p>
+                          <div className="flex flex-wrap gap-1">
+                            {data.skills[cat].map((skill) => (
+                              <span key={skill} className="px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary print:bg-neutral-100 print:text-neutral-800">{skill}</span>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </ResumeSection>
               )}
             </div>

@@ -78,22 +78,49 @@ const ResumePreviewPanel = () => {
           {data.projects.length > 0 && (
             <div>
               <h3 className={s.sectionTitle}>Projects</h3>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {data.projects.map((proj) => (
-                  <div key={proj.id}>
-                    <p className="text-sm font-medium">{proj.name}</p>
-                    <p className="text-xs text-muted-foreground">{proj.techStack}</p>
-                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{proj.description}</p>
+                  <div key={proj.id} className="border border-border rounded-md p-3">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium">{proj.name}</p>
+                      <div className="flex items-center gap-2">
+                        {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground"><ExternalLink className="w-3.5 h-3.5" /></a>}
+                        {proj.githubUrl && <a href={proj.githubUrl} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground"><Github className="w-3.5 h-3.5" /></a>}
+                      </div>
+                    </div>
+                    {proj.techStack.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1.5">
+                        {proj.techStack.map((t) => (
+                          <span key={t} className="px-1.5 py-0.5 text-[10px] rounded bg-muted text-muted-foreground">{t}</span>
+                        ))}
+                      </div>
+                    )}
+                    <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{proj.description}</p>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {data.skills && (
+          {(data.skills.technical.length > 0 || data.skills.soft.length > 0 || data.skills.tools.length > 0) && (
             <div>
               <h3 className={s.sectionTitle}>Skills</h3>
-              <p className="text-sm text-muted-foreground">{data.skills}</p>
+              <div className="space-y-2">
+                {(["technical", "soft", "tools"] as const).map((cat) => {
+                  if (data.skills[cat].length === 0) return null;
+                  const label = cat === "technical" ? "Technical" : cat === "soft" ? "Soft Skills" : "Tools";
+                  return (
+                    <div key={cat}>
+                      <p className="text-xs font-medium text-foreground mb-1">{label}</p>
+                      <div className="flex flex-wrap gap-1">
+                        {data.skills[cat].map((skill) => (
+                          <span key={skill} className="px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary">{skill}</span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
