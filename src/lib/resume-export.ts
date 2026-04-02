@@ -1,29 +1,24 @@
-import { ResumeData } from "./resume-store";
+import { ResumeData, allSkills } from "./resume-store";
 
 export function resumeToPlainText(data: ResumeData): string {
   const lines: string[] = [];
 
-  // Name
   if (data.personalInfo.name) lines.push(data.personalInfo.name.toUpperCase());
 
-  // Contact
   const contact = [data.personalInfo.email, data.personalInfo.phone, data.personalInfo.location].filter(Boolean);
   if (contact.length) lines.push(contact.join(" | "));
 
-  // Links
   const links = [data.links.github, data.links.linkedin].filter(Boolean);
   if (links.length) lines.push(links.join(" | "));
 
   if (lines.length) lines.push("");
 
-  // Summary
   if (data.summary.trim()) {
     lines.push("SUMMARY");
     lines.push(data.summary.trim());
     lines.push("");
   }
 
-  // Experience
   if (data.experience.length > 0) {
     lines.push("EXPERIENCE");
     data.experience.forEach((exp) => {
@@ -33,7 +28,6 @@ export function resumeToPlainText(data: ResumeData): string {
     });
   }
 
-  // Education
   if (data.education.length > 0) {
     lines.push("EDUCATION");
     data.education.forEach((edu) => {
@@ -42,21 +36,22 @@ export function resumeToPlainText(data: ResumeData): string {
     lines.push("");
   }
 
-  // Projects
   if (data.projects.length > 0) {
     lines.push("PROJECTS");
     data.projects.forEach((proj) => {
-      lines.push(`${proj.name}${proj.techStack ? ` [${proj.techStack}]` : ""}`);
+      const tech = proj.techStack.length > 0 ? ` [${proj.techStack.join(", ")}]` : "";
+      lines.push(`${proj.name}${tech}`);
       if (proj.description.trim()) lines.push(proj.description.trim());
       if (proj.link) lines.push(proj.link);
+      if (proj.githubUrl) lines.push(proj.githubUrl);
       lines.push("");
     });
   }
 
-  // Skills
-  if (data.skills.trim()) {
+  const skills = allSkills(data.skills);
+  if (skills.length > 0) {
     lines.push("SKILLS");
-    lines.push(data.skills.trim());
+    lines.push(skills.join(", "));
     lines.push("");
   }
 
