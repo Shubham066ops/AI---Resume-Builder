@@ -1,14 +1,25 @@
-import { useResumeStore, Education, Experience, Project } from "@/lib/resume-store";
+import { useState } from "react";
+import { useResumeStore, Education, Experience, Project, SkillCategories } from "@/lib/resume-store";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Sparkles } from "lucide-react";
+import { Plus, Trash2, Sparkles, ChevronDown, ChevronRight, ExternalLink, Github, Loader2 } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import BulletGuidance from "./BulletGuidance";
+import TagInput from "./TagInput";
 
 const uid = () => crypto.randomUUID();
 
+const SUGGESTED_SKILLS = {
+  technical: ["TypeScript", "React", "Node.js", "PostgreSQL", "GraphQL"],
+  soft: ["Team Leadership", "Problem Solving"],
+  tools: ["Git", "Docker", "AWS"],
+};
+
 const BuilderForm = () => {
   const { data, setField, loadSample } = useResumeStore();
+  const [suggesting, setSuggesting] = useState(false);
+  const [openProjects, setOpenProjects] = useState<Record<string, boolean>>({});
 
   const updatePersonal = (key: string, value: string) =>
     setField("personalInfo", { ...data.personalInfo, [key]: value });
@@ -16,41 +27,61 @@ const BuilderForm = () => {
   const updateLinks = (key: string, value: string) =>
     setField("links", { ...data.links, [key]: value });
 
+  // Education
   const addEducation = () =>
     setField("education", [
       ...data.education,
       { id: uid(), institution: "", degree: "", field: "", startDate: "", endDate: "" },
     ]);
-
   const removeEducation = (id: string) =>
     setField("education", data.education.filter((e) => e.id !== id));
-
   const updateEducation = (id: string, key: keyof Education, value: string) =>
     setField("education", data.education.map((e) => (e.id === id ? { ...e, [key]: value } : e)));
 
+  // Experience
   const addExperience = () =>
     setField("experience", [
       ...data.experience,
       { id: uid(), company: "", role: "", startDate: "", endDate: "", description: "" },
     ]);
-
   const removeExperience = (id: string) =>
     setField("experience", data.experience.filter((e) => e.id !== id));
-
   const updateExperience = (id: string, key: keyof Experience, value: string) =>
     setField("experience", data.experience.map((e) => (e.id === id ? { ...e, [key]: value } : e)));
 
-  const addProject = () =>
+  // Projects
+  const addProject = () => {
+    const id = uid();
     setField("projects", [
       ...data.projects,
-      { id: uid(), name: "", description: "", techStack: "", link: "" },
+      { id, name: "", description: "", techStack: [], link: "", githubUrl: "" },
     ]);
-
+    setOpenProjects((prev) => ({ ...prev, [id]: true }));
+  };
   const removeProject = (id: string) =>
     setField("projects", data.projects.filter((p) => p.id !== id));
-
-  const updateProject = (id: string, key: keyof Project, value: string) =>
+  const updateProject = (id: string, key: string, value: any) =>
     setField("projects", data.projects.map((p) => (p.id === id ? { ...p, [key]: value } : p)));
+
+  // Skills
+  const updateSkillCategory = (category: keyof SkillCategories, tags: string[]) =>
+    setField("skills", { ...data.skills, [category]: tags });
+
+  const suggestSkills = () => {
+    setSuggesting(true);
+    setTimeout(() => {
+      const merged: SkillCategories = {
+        technical: [...new Set([...data.skills.technical, ...SUGGESTED_SKILLS.technical])],
+        soft: [...new Set([...data.skills.soft, ...SUGGESTED_SKILLS.soft])],
+        tools: [...new Set([...data.skills.tools, ...SUGGESTED_SKILLS.tools])],
+      };
+      setField("skills", merged);
+      setSuggesting(false);
+    }, 1000);
+  };
+
+  const toggleProject = (id: string) =>
+    setOpenProjects((prev) => ({ ...prev, [id]: !prev[id] }));
 
   return (
     <div className="space-y-8">
@@ -121,30 +152,85 @@ const BuilderForm = () => {
         ))}
       </Section>
 
+      {/* Skills */}
+      <Section title="Skills">
+        <div className="space-y-4">
+          <Button variant="outline" size="sm" onClick={suggestSkills} disabled={suggesting} className="gap-2">
+            {suggesting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+            {suggesting ? "Adding..." : "✨ Suggest Skills"}
+          </Button>
+
+          {(["technical", "soft", "tools"] as const).map((cat) => {
+            const label = cat === "technical" ? "Technical Skills" : cat === "soft" ? "Soft Skills" : "Tools & Technologies";
+            return (
+              <div key={cat} className="space-y-1.5">
+                <p className="text-sm font-medium text-foreground">
+                  {label} ({data.skills[cat].length})
+                </p>
+                <TagInput
+                  tags={data.skills[cat]}
+                  onChange={(tags) => updateSkillCategory(cat, tags)}
+                  placeholder={`Add ${label.toLowerCase()}…`}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </Section>
+
       {/* Projects */}
       <Section title="Projects" onAdd={addProject}>
         {data.projects.map((proj) => (
-          <div key={proj.id} className="space-y-2 p-4 border border-border rounded-md relative">
-            <button onClick={() => removeProject(proj.id)} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground">
-              <Trash2 className="w-4 h-4" />
-            </button>
-            <Input placeholder="Project Name" value={proj.name} onChange={(e) => updateProject(proj.id, "name", e.target.value)} />
-            <Input placeholder="Tech Stack" value={proj.techStack} onChange={(e) => updateProject(proj.id, "techStack", e.target.value)} />
-            <Input placeholder="Link" value={proj.link} onChange={(e) => updateProject(proj.id, "link", e.target.value)} />
-            <Textarea placeholder="Description" value={proj.description} onChange={(e) => updateProject(proj.id, "description", e.target.value)} rows={2} />
-            <BulletGuidance text={proj.description} />
-          </div>
+          <Collapsible key={proj.id} open={openProjects[proj.id] ?? false} onOpenChange={() => toggleProject(proj.id)}>
+            <div className="border border-border rounded-md overflow-hidden">
+              <CollapsibleTrigger className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors text-left">
+                <div className="flex items-center gap-2">
+                  {openProjects[proj.id] ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                  <span className="text-sm font-medium">{proj.name || "Untitled Project"}</span>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); removeProject(proj.id); }}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="space-y-3 p-4 pt-0">
+                  <Input placeholder="Project Title" value={proj.name} onChange={(e) => updateProject(proj.id, "name", e.target.value)} />
+                  <div className="relative">
+                    <Textarea
+                      placeholder="Description (max 200 chars)"
+                      value={proj.description}
+                      onChange={(e) => {
+                        if (e.target.value.length <= 200) updateProject(proj.id, "description", e.target.value);
+                      }}
+                      rows={2}
+                    />
+                    <span className="absolute bottom-2 right-3 text-[10px] text-muted-foreground">
+                      {proj.description.length}/200
+                    </span>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Tech Stack</p>
+                    <TagInput tags={proj.techStack} onChange={(tags) => updateProject(proj.id, "techStack", tags)} placeholder="Add tech…" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground flex items-center gap-1"><ExternalLink className="w-3 h-3" /> Live URL</p>
+                      <Input placeholder="https://..." value={proj.link} onChange={(e) => updateProject(proj.id, "link", e.target.value)} />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground flex items-center gap-1"><Github className="w-3 h-3" /> GitHub URL</p>
+                      <Input placeholder="https://github.com/..." value={proj.githubUrl} onChange={(e) => updateProject(proj.id, "githubUrl", e.target.value)} />
+                    </div>
+                  </div>
+                  <BulletGuidance text={proj.description} />
+                </div>
+              </CollapsibleContent>
+            </div>
+          </Collapsible>
         ))}
-      </Section>
-
-      {/* Skills */}
-      <Section title="Skills">
-        <Input
-          placeholder="React, TypeScript, Node.js..."
-          value={data.skills}
-          onChange={(e) => setField("skills", e.target.value)}
-        />
-        <p className="text-xs text-muted-foreground">Comma-separated list</p>
       </Section>
 
       {/* Links */}

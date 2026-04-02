@@ -78,7 +78,7 @@ const ATSScorePanel = () => {
 function getImprovements(data: import("@/lib/resume-store").ResumeData): string[] {
   const items: string[] = [];
   const wordCount = data.summary.trim().split(/\s+/).filter(Boolean).length;
-  const skillCount = data.skills.split(",").map((s) => s.trim()).filter(Boolean).length;
+  const skillCount = [...data.skills.technical, ...data.skills.soft, ...data.skills.tools].length;
   const hasNumbers = /\d+%|\d+x|\d+k|\d+\+|\d+M/i;
   const allBullets = [...data.experience.map((e) => e.description), ...data.projects.map((p) => p.description)];
 
