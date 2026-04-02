@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ResumeNav from "@/components/resume/ResumeNav";
 import TemplateSelector from "@/components/resume/TemplateSelector";
+import { ExternalLink, Github } from "lucide-react";
 import { useResumeStore } from "@/lib/resume-store";
 import { useTemplateStore, templateStyles } from "@/lib/template-store";
 import { resumeToPlainText } from "@/lib/resume-export";
