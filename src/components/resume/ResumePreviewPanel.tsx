@@ -1,5 +1,6 @@
 import { useResumeStore } from "@/lib/resume-store";
 import { useTemplateStore, templateStyles } from "@/lib/template-store";
+import { ExternalLink, Github } from "lucide-react";
 
 const ResumePreviewPanel = () => {
   const { data } = useResumeStore();
